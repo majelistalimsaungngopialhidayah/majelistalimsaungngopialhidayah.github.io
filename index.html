@@ -1,0 +1,2119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Majelis Ta'lim Saung Ngopi - Beranda</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Scheherazade+New:wght@400;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        /* --- CSS Reset Sederhana --- */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* --- Variabel CSS --- */
+        :root {
+            --primary-color: #006400; /* Hijau Tua */
+            --secondary-color: #f4a460; /* Sandy Brown / Emas Muda */
+            --accent-color: #d4af37; /* Emas lebih menonjol */
+            --light-color: #f8f9fa; /* Hampir putih, untuk background section */
+            --light-card-color: #ffffff; /* Putih murni untuk card */
+            --dark-color: #2c3e50; /* Biru Gelap Keabuan */
+            --text-color: #34495e; /* Warna teks utama, sedikit lebih terang dari dark-color */
+            --font-body: 'Poppins', sans-serif;
+            --font-heading: 'Montserrat', sans-serif;
+            --font-arabic: 'Scheherazade New', serif;
+            --navbar-height: 70px;
+            --animation-speed: 0.6s;
+            --transition-default: all 0.3s ease-in-out;
+            --border-radius-sm: 4px;
+            --border-radius-md: 8px;
+            --border-radius-lg: 12px;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.07);
+            --shadow-md: 0 5px 15px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        /* --- Gaya Dasar Body --- */
+        body {
+            font-family: var(--font-body);
+            line-height: 1.7;
+            color: var(--text-color);
+            background-color: var(--light-color);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px; /* Base font size */
+        }
+
+        /* --- Enhanced Loading Screen --- */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--primary-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            transition: opacity var(--animation-speed) 0.5s ease-out, visibility var(--animation-speed) 0.5s ease-out; /* Tambah delay untuk transisi opacity */
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loading-logo-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .loading-logo {
+            width: 70px;
+            height: auto;
+            margin-right: 15px;
+            animation: pulseLogo 1.8s infinite ease-in-out;
+        }
+
+        .loading-text-logo {
+            width: 130px;
+            height: auto;
+            animation: fadeInText 2s infinite alternate ease-in-out;
+        }
+
+        .progress-bar-container {
+            width: 220px;
+            height: 8px;
+            background-color: rgba(244, 164, 96, 0.25);
+            border-radius: var(--border-radius-sm);
+            overflow: hidden;
+            margin-top: 20px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+            border-radius: var(--border-radius-sm);
+            animation: fillProgress 5s cubic-bezier(0.25, 1, 0.5, 1) forwards; /* Durasi loading 5 detik */
+        }
+        
+        .loading-message {
+            margin-top: 15px;
+            color: var(--light-color);
+            font-size: 0.9rem;
+            font-style: italic;
+            opacity: 0;
+            animation: fadeInMessage 5s 0.5s forwards; /* Muncul setelah progress bar mulai */
+        }
+
+        @keyframes pulseLogo {
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.08); opacity: 1; }
+        }
+
+        @keyframes fadeInText {
+            0% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes fillProgress {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+
+        @keyframes fadeInMessage {
+            0% { opacity: 0; }
+            20% { opacity: 0.8; } /* Cepat muncul */
+            80% { opacity: 0.8; } /* Tetap terlihat */
+            100% { opacity: 0; } /* Hilang bersamaan loading screen */
+        }
+
+
+        /* --- Konten Utama (Awalnya disembunyikan) --- */
+        #main-content {
+            display: none;
+            opacity: 0;
+            transition: opacity var(--animation-speed) ease-in;
+        }
+
+        #main-content.visible {
+            display: block;
+            opacity: 1;
+        }
+
+        /* --- Utility Classes --- */
+        .container {
+            max-width: 1180px; /* Sedikit lebih lebar */
+            margin: auto;
+            padding: 0 20px;
+        }
+
+        section {
+            padding: 70px 0; /* Padding section sedikit dikurangi untuk lebih banyak konten terlihat */
+            overflow: hidden; /* Penting untuk animasi masuk dan menghindari horizontal scroll */
+        }
+
+        section:nth-of-type(even) { /* Warna latar belang-beling untuk variasi */
+             background-color: var(--light-card-color);
+        }
+
+
+        section h2.section-title {
+            text-align: center;
+            font-family: var(--font-heading);
+            font-size: 2.6rem;
+            font-weight: 700;
+            margin-bottom: 45px;
+            color: var(--primary-color);
+            position: relative;
+            padding-bottom: 15px;
+            text-transform: capitalize;
+        }
+
+        section h2.section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90px;
+            height: 4px;
+            background-color: var(--secondary-color);
+            border-radius: var(--border-radius-sm);
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            border-radius: var(--border-radius-md);
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: var(--transition-default);
+        }
+
+        a:hover {
+            color: var(--secondary-color);
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--primary-color);
+            color: #fff;
+            padding: 12px 28px;
+            border: 2px solid transparent;
+            border-radius: 50px; /* Sangat bulat */
+            cursor: pointer;
+            transition: var(--transition-default), transform 0.2s ease-out;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn:hover {
+            background: var(--secondary-color);
+            color: var(--dark-color);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-color);
+        }
+
+        .btn-secondary {
+            background: var(--dark-color);
+            color: #fff;
+        }
+        .btn-secondary:hover {
+            background: var(--light-color);
+            color: var(--dark-color);
+            border-color: var(--dark-color);
+        }
+        .btn-small {
+            padding: 8px 18px;
+            font-size: 0.85rem;
+        }
+
+
+        /* --- Header & Navbar --- */
+        #main-header {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px); /* Safari support */
+            color: var(--dark-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--navbar-height);
+            z-index: 1000;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.08);
+            transition: top 0.4s ease-in-out, background-color 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
+        }
+
+        #main-header.scrolled {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: var(--shadow-sm);
+        }
+        #main-header.header-hidden {
+            top: calc(-1 * var(--navbar-height)); /* Sembunyikan header */
+        }
+
+
+        #main-header .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        #main-header .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        #main-header .logo img {
+            height: 48px;
+            width: auto;
+            margin-right: 8px;
+            border-radius: 0;
+            transition: transform 0.3s ease;
+        }
+        #main-header .logo-container:hover img {
+            transform: scale(1.05);
+        }
+        #main-header .logo-text-img {
+            height: 32px;
+            width: auto;
+            border-radius: 0;
+            transition: opacity 0.3s ease;
+        }
+         #main-header .logo-container:hover .logo-text-img {
+            opacity: 0.85;
+        }
+
+
+        /* --- Hamburger Menu --- */
+        #hamburger-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            cursor: pointer;
+            padding: 8px; /* Area klik lebih besar */
+            z-index: 1100;
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55), color 0.3s ease; /* Animasi rotasi & warna */
+        }
+        #hamburger-btn:hover {
+            color: var(--secondary-color);
+        }
+        #hamburger-btn.active {
+            transform: rotate(180deg); /* Putar untuk efek X */
+        }
+        #hamburger-btn .hamburger-icon { /* Untuk transisi ikon bars/times */
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+
+        /* --- Mobile Navigation Menu --- */
+        #mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 75%;
+            max-width: 300px;
+            height: 100%;
+            background: linear-gradient(160deg, var(--primary-color), #004d00); /* Gradient background */
+            padding: calc(var(--navbar-height) + 30px) 25px 30px 25px;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.2);
+            transition: right 0.5s cubic-bezier(0.65, 0.05, 0.36, 1); /* Transisi slide lebih smooth */
+            z-index: 1050;
+            overflow-y: auto;
+        }
+
+        #mobile-menu.active {
+            right: 0;
+        }
+
+        #mobile-menu ul {
+            list-style: none;
+        }
+
+        #mobile-menu ul li {
+            margin-bottom: 22px;
+            opacity: 0;
+            transform: translateX(30px);
+            transition: opacity 0.35s ease, transform 0.35s ease;
+        }
+        #mobile-menu.active ul li {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        /* Staggered animation untuk item menu */
+        #mobile-menu.active ul li:nth-child(1) { transition-delay: 0.12s; }
+        #mobile-menu.active ul li:nth-child(2) { transition-delay: 0.18s; }
+        #mobile-menu.active ul li:nth-child(3) { transition-delay: 0.24s; }
+        #mobile-menu.active ul li:nth-child(4) { transition-delay: 0.30s; }
+        #mobile-menu.active ul li:nth-child(5) { transition-delay: 0.36s; }
+        #mobile-menu.active ul li:nth-child(6) { transition-delay: 0.42s; }
+
+
+        #mobile-menu ul li a {
+            color: #f0f0f0; /* Warna link sedikit off-white */
+            font-size: 1.25rem;
+            font-weight: 500; /* Sedikit lebih ringan dari 600 */
+            text-decoration: none;
+            display: block;
+            padding: 8px 5px;
+            transition: color 0.3s ease, letter-spacing 0.3s ease, transform 0.3s ease;
+            border-bottom: 1px solid rgba(255,255,255,0.1); /* Garis pemisah halus */
+        }
+        #mobile-menu ul li:last-child a {
+            border-bottom: none;
+        }
+
+        #mobile-menu ul li a:hover {
+            color: var(--secondary-color);
+            letter-spacing: 0.5px; /* Sedikit spasi saat hover */
+            transform: translateX(5px);
+        }
+
+        #close-menu-btn {
+            position: absolute;
+            top: 22px;
+            right: 22px;
+            background: transparent;
+            border: none;
+            font-size: 1.9rem;
+            color: rgba(255,255,255,0.8);
+            cursor: pointer;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+        #close-menu-btn:hover {
+            transform: rotate(90deg) scale(1.15);
+            color: var(--secondary-color);
+        }
+
+        #menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.65);
+            z-index: 1040;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.45s ease, visibility 0.45s ease;
+        }
+        #menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+
+        /* --- Desktop Navigation --- */
+        #desktop-menu ul {
+            display: flex;
+            list-style: none;
+        }
+
+        #desktop-menu ul li {
+            margin-left: 32px;
+        }
+
+        #desktop-menu ul li a {
+            color: var(--text-color);
+            font-weight: 500;
+            font-family: var(--font-heading);
+            text-decoration: none;
+            position: relative;
+            padding: 8px 0;
+            transition: color 0.3s ease;
+            letter-spacing: 0.2px;
+        }
+
+        #desktop-menu ul li a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px; /* Sedikit di bawah teks */
+            left: 0; /* Mulai dari kiri */
+            width: 0;
+            height: 2.5px;
+            background-color: var(--secondary-color);
+            border-radius: var(--border-radius-sm);
+            transition: width 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Animasi underline lebih smooth */
+        }
+
+        #desktop-menu ul li a:hover,
+        #desktop-menu ul li a.active-link {
+            color: var(--primary-color);
+        }
+
+        #desktop-menu ul li a:hover::after,
+        #desktop-menu ul li a.active-link::after {
+            width: 100%;
+        }
+
+        /* --- Hero Section --- */
+        #hero {
+            position: relative;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
+            background-color: var(--primary-color);
+        }
+
+        .hero-slider {
+            display: flex;
+            height: 100%;
+            /* Width akan diatur oleh JS berdasarkan jumlah slide */
+            transition: transform 0.9s cubic-bezier(0.65, 0.05, 0.36, 1); /* Transisi slide lebih elegan */
+        }
+
+        .hero-slide {
+            flex-shrink: 0;
+            /* Width per slide akan diatur oleh JS */
+            height: 100vh;
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            position: relative;
+        }
+
+        .hero-slide::before { /* Parallax-like overlay */
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, rgba(0,0,0,0.6) 100%);
+            z-index: 1;
+            /* Efek Ken Burns (subtle zoom & pan) - jika diinginkan, tambahkan animasi */
+        }
+
+        .hero-content-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 2;
+        }
+
+        .hero-content {
+            text-align: center;
+            color: #fff;
+            max-width: 850px;
+            padding: 25px 35px;
+            border-radius: var(--border-radius-md);
+            /* Glassmorphism effect */
+            background: rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            /* Animasi konten saat slide aktif */
+            opacity: 0;
+            transform: translateY(30px);
+            animation-fill-mode: forwards; /* Pertahankan state akhir animasi */
+        }
+
+        /* Animasi untuk konten hero yang aktif */
+        .hero-slide.active-slide .hero-content {
+            animation: heroContentFadeInUp 1s var(--animation-speed) forwards;
+        }
+
+        @keyframes heroContentFadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+
+        .hero-content h1 {
+            font-family: var(--font-heading);
+            font-size: 3rem;
+            margin-bottom: 18px;
+            font-weight: 700;
+            line-height: 1.25;
+            text-shadow: 2px 3px 8px rgba(0,0,0,0.6);
+        }
+
+        .hero-content .arabic-text {
+            font-family: var(--font-arabic);
+            font-size: 2.6rem;
+            margin-bottom: 22px;
+            color: var(--secondary-color);
+            text-shadow: 1px 1px 6px rgba(0,0,0,0.4);
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 28px;
+            line-height: 1.75;
+            font-weight: 300;
+        }
+
+        .hero-nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2.2rem;
+            color: rgba(255, 255, 255, 0.7);
+            background: rgba(0, 0, 0, 0.25);
+            padding: 12px;
+            cursor: pointer;
+            z-index: 3;
+            user-select: none;
+            border-radius: 50%;
+            transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .hero-nav-arrow:hover {
+            background: var(--secondary-color);
+            color: var(--dark-color);
+            transform: translateY(-50%) scale(1.12);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .hero-nav-left {
+            left: 25px;
+        }
+
+        .hero-nav-right {
+            right: 25px;
+        }
+
+        .hero-slide-indicators {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            z-index: 3;
+        }
+
+        .hero-slide-indicator {
+            width: 10px;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease, width 0.3s ease;
+        }
+
+        .hero-slide-indicator.active {
+            background-color: var(--secondary-color);
+            transform: scale(1.1);
+            width: 20px; /* Indikator aktif lebih panjang */
+            border-color: var(--secondary-color);
+        }
+
+        /* --- Sambutan Section --- */
+        #sambutan {
+            background-color: var(--light-card-color);
+        }
+        #sambutan .sambutan-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 45px;
+            align-items: flex-start;
+        }
+
+        #sambutan .sambutan-img-container { /* Container untuk gambar dan dekorasi */
+            flex: 1;
+            min-width: 280px;
+            text-align: center;
+            position: relative;
+        }
+
+        #sambutan .sambutan-img-container::before { /* Elemen dekoratif 1 */
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: -15px;
+            width: 70%;
+            height: 70%;
+            background-color: var(--primary-color);
+            opacity: 0.08;
+            border-radius: var(--border-radius-lg);
+            z-index: 0;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+         #sambutan .sambutan-img-container:hover::before {
+            transform: translate(8px, 8px) rotate(-3deg);
+            opacity: 0.12;
+        }
+        #sambutan .sambutan-img-container::after { /* Elemen dekoratif 2 */
+            content: '';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 50px;
+            height: 50px;
+            border: 3px dashed var(--secondary-color);
+            border-radius: 50%;
+            opacity: 0.5;
+            z-index: 0;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #sambutan .sambutan-img-container:hover::after {
+            transform: rotate(45deg) scale(1.1);
+            opacity: 0.8;
+        }
+
+
+        #sambutan .sambutan-img {
+            max-width: 300px;
+            border-radius: var(--border-radius-lg);
+            border: 5px solid var(--secondary-color);
+            box-shadow: var(--shadow-lg);
+            margin: 0 auto;
+            position: relative; /* Agar di atas pseudo-elements */
+            z-index: 1;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+        #sambutan .sambutan-img:hover {
+            transform: scale(1.03) rotate(1deg);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        #sambutan .sambutan-text {
+            flex: 1.8; /* Teks sedikit lebih dominan */
+            min-width: 300px;
+        }
+
+        #sambutan .sambutan-text h3 {
+            font-family: var(--font-heading);
+            font-size: 1.9rem;
+            margin-bottom: 12px;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        #sambutan .sambutan-text .jabatan {
+            font-style: italic;
+            color: #555;
+            margin-bottom: 22px;
+            font-size: 1.05rem;
+        }
+        #sambutan .sambutan-text p {
+            margin-bottom: 16px;
+            text-align: justify;
+            font-size: 0.98rem;
+        }
+         #sambutan .sambutan-text strong {
+            color: var(--dark-color);
+         }
+
+
+        /* --- Jadwal Kajian Section --- */
+        #jadwal {
+            background-color: var(--light-color);
+        }
+
+        .jadwal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .jadwal-item {
+            background: var(--light-card-color);
+            padding: 28px;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-md);
+            border-left: 6px solid var(--primary-color);
+            transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .jadwal-item:hover {
+            transform: translateY(-10px) scale(1.01);
+            box-shadow: var(--shadow-lg);
+            border-left-color: var(--secondary-color);
+        }
+
+        .jadwal-item .jadwal-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .jadwal-item .jadwal-icon {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-right: 15px;
+            min-width: 28px;
+            transition: color 0.35s ease, transform 0.35s ease;
+        }
+        .jadwal-item:hover .jadwal-icon {
+            color: var(--secondary-color);
+            transform: rotateY(180deg); /* Animasi ikon */
+        }
+
+        .jadwal-item h3 {
+            color: var(--primary-color);
+            margin-bottom: 0;
+            font-size: 1.4rem;
+            font-family: var(--font-heading);
+            font-weight: 600;
+            transition: color 0.35s ease;
+        }
+        .jadwal-item:hover h3 {
+            color: var(--dark-color);
+        }
+
+        .jadwal-item .waktu, .jadwal-item .pemateri {
+            font-weight: 500;
+            color: #4c5a67; /* Warna abu-abu kebiruan */
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+        }
+        .jadwal-item .waktu i, .jadwal-item .pemateri i {
+            margin-right: 10px;
+            color: var(--secondary-color);
+            font-size: 1.05rem;
+        }
+
+        .jadwal-item .pemateri {
+            margin-bottom: 15px;
+        }
+        .jadwal-item .deskripsi-kajian {
+            font-size: 0.9rem;
+            color: #555;
+            line-height: 1.65;
+            flex-grow: 1; /* Agar deskripsi mengisi ruang */
+        }
+
+        .jadwal-catatan {
+            text-align: center;
+            margin-top: 35px;
+            font-style: italic;
+            color: #6c757d; /* Bootstrap's muted color */
+            font-size: 0.88rem;
+        }
+
+        /* Batas untuk Bagian 1. Bagian selanjutnya akan melanjutkan dari sini. */
+        /* --- Galeri Kegiatan Section --- */
+        #galeri {
+            background-color: var(--light-card-color); /* Atau var(--light-color) jika ingin beda */
+        }
+        .galeri-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+            gap: 25px;
+        }
+
+        .galeri-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-md);
+            cursor: pointer;
+            aspect-ratio: 4 / 3; /* Jaga rasio aspek gambar */
+            background-color: #e0e0e0; /* Placeholder bg color */
+        }
+
+        .galeri-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s cubic-bezier(0.215, 0.610, 0.355, 1), filter 0.5s ease;
+            border-radius: var(--border-radius-lg); /* Pastikan gambar mengikuti radius */
+        }
+
+        .galeri-item:hover img {
+            transform: scale(1.12);
+            filter: brightness(0.6) saturate(1.2); /* Efek dramatis saat hover */
+        }
+
+        .galeri-item .overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0, 64, 0, 0.9) 0%, rgba(0, 64, 0, 0.7) 40%, transparent 100%);
+            color: #fff;
+            padding: 20px 15px 15px 15px;
+            transform: translateY(100%); /* Awalnya tersembunyi di bawah */
+            transition: transform 0.45s cubic-bezier(0.215, 0.610, 0.355, 1);
+            text-align: left;
+        }
+        .galeri-item:hover .overlay {
+            transform: translateY(0); /* Munculkan overlay saat hover */
+        }
+
+        .galeri-item .overlay-title {
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            line-height: 1.3;
+        }
+
+        .galeri-item .view-description-btn {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+            border-radius: 20px;
+            text-decoration: none;
+            transition: var(--transition-default), opacity 0.3s ease, transform 0.3s ease;
+            opacity: 0;
+            transform: translateY(10px);
+            font-weight: 500;
+        }
+        .galeri-item:hover .view-description-btn {
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 0.15s;
+        }
+         .galeri-item .view-description-btn:hover {
+            background-color: #fff;
+            color: var(--primary-color);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        /* Modal untuk deskripsi gambar */
+        .galeri-modal {
+            display: none; /* Diubah ke flex oleh JS */
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.85); /* Overlay lebih gelap */
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .galeri-modal-content {
+            background-color: var(--light-card-color);
+            margin: auto;
+            padding: 25px;
+            border-radius: var(--border-radius-lg);
+            max-width: 650px;
+            width: 95%;
+            text-align: center;
+            position: relative;
+            animation: zoomInModal 0.45s cubic-bezier(0.34, 1.56, 0.64, 1); /* Efek zoom dengan bounce */
+            box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+        }
+        @keyframes zoomInModal {
+            from { transform: scale(0.7) translateY(20px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
+        }
+        .galeri-modal-content img {
+            max-width: 100%;
+            max-height: 65vh;
+            object-fit: contain;
+            border-radius: var(--border-radius-md);
+            margin-bottom: 18px;
+        }
+        .galeri-modal-content h3 {
+            font-family: var(--font-heading);
+            color: var(--primary-color);
+            margin-bottom: 12px;
+            font-size: 1.5rem;
+        }
+        .galeri-modal-content p {
+            font-size: 0.98rem;
+            color: var(--text-color);
+            line-height: 1.65;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .close-modal-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: var(--dark-color);
+            font-size: 2.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease, transform 0.3s ease;
+            line-height: 1; /* Agar tidak terlalu tinggi */
+        }
+        .close-modal-btn:hover {
+            color: var(--secondary-color);
+            transform: rotate(90deg) scale(1.1);
+        }
+
+
+        /* --- Artikel/Berita Section --- */
+         #artikel {
+            background-color: var(--light-color);
+        }
+        .artikel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); /* Minimal 310px */
+            gap: 30px;
+        }
+        .artikel-item {
+            background: var(--light-card-color);
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.35s ease, box-shadow 0.35s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .artikel-item:hover {
+             transform: translateY(-10px) scale(1.01);
+             box-shadow: var(--shadow-lg);
+        }
+        .artikel-item .artikel-img-link { /* Pembungkus gambar agar bisa jadi link */
+            display: block;
+            height: 210px; /* Tinggi gambar artikel */
+            overflow: hidden;
+        }
+        .artikel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+            transition: transform 0.4s ease;
+        }
+        .artikel-item:hover img {
+            transform: scale(1.08);
+        }
+        .artikel-content {
+            padding: 22px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .artikel-content h3 {
+            font-family: var(--font-heading);
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 1.25rem;
+            line-height: 1.45;
+            font-weight: 600;
+        }
+        .artikel-content h3 a {
+            color: inherit;
+        }
+        .artikel-content h3 a:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+            text-decoration-color: var(--secondary-color);
+            text-underline-offset: 3px;
+        }
+         .artikel-meta {
+             font-size: 0.8rem;
+             color: #777;
+             margin-bottom: 12px;
+             display: flex;
+             flex-wrap: wrap;
+             gap: 10px 18px; /* Jarak antar meta items (row gap, column gap) */
+         }
+        .artikel-meta span {
+            display: flex;
+            align-items: center;
+        }
+        .artikel-meta i {
+            margin-right: 7px;
+            color: var(--secondary-color);
+            font-size: 0.9em; /* Ukuran ikon relatif */
+        }
+        .artikel-excerpt {
+            margin-bottom: 18px;
+            font-size: 0.92rem;
+            line-height: 1.65;
+            flex-grow: 1;
+            color: #555;
+        }
+        .artikel-item .btn {
+            align-self: flex-start;
+            margin-top: auto;
+        }
+        .all-articles-btn-container {
+            text-align: center;
+            margin-top: 45px;
+        }
+
+
+        /* --- Kontak & Lokasi Section --- */
+        #kontak {
+            background-color: var(--light-card-color); /* Atau var(--light-color) */
+        }
+        .kontak-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 35px;
+        }
+
+        .kontak-info {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .kontak-info h3 {
+            font-family: var(--font-heading);
+            font-size: 1.7rem;
+            margin-bottom: 22px;
+            color: var(--primary-color);
+            font-weight: 600;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        .kontak-info h3::after { /* Garis bawah kecil untuk judul di kontak */
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background-color: var(--secondary-color);
+            border-radius: var(--border-radius-sm);
+        }
+
+
+        .kontak-info ul {
+            list-style: none;
+        }
+
+        .kontak-info ul li {
+            margin-bottom: 18px;
+            display: flex;
+            align-items: flex-start;
+            font-size: 0.98rem;
+        }
+
+        .kontak-info ul li i {
+            color: var(--primary-color);
+            font-size: 1.3rem;
+            margin-right: 18px;
+            width: 22px;
+            text-align: center;
+            margin-top: 2px;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+        .kontak-info ul li:hover i {
+            transform: scale(1.15);
+        }
+
+        .kontak-info ul li strong {
+            display: block;
+            margin-bottom: 2px;
+            color: var(--dark-color);
+            font-weight: 600;
+        }
+        .kontak-info ul li a {
+            color: var(--primary-color);
+            word-break: break-all;
+            transition: var(--transition-default), letter-spacing 0.2s ease;
+        }
+        .kontak-info ul li a:hover {
+            text-decoration: underline;
+            color: var(--secondary-color);
+            letter-spacing: 0.3px;
+        }
+
+        .kontak-map {
+            flex: 1.4; /* Map sedikit lebih lebar */
+            min-width: 300px;
+            min-height: 380px;
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            background-color: #e9ecef; /* Placeholder jika map lambat load */
+        }
+        .kontak-map iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        .social-links-kontak {
+            margin-top: 28px;
+            text-align: left;
+        }
+        .social-links-kontak a {
+            color: var(--primary-color);
+            margin-right: 15px;
+            font-size: 1.6rem;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        .social-links-kontak a:hover {
+            color: var(--secondary-color);
+            transform: translateY(-3px) scale(1.1);
+        }
+        .social-links-kontak a:last-child {
+            margin-right: 0;
+        }
+
+
+        /* --- Footer --- */
+        #main-footer {
+            background: var(--dark-color);
+            color: #b0bec5; /* Warna teks footer lebih lembut */
+            text-align: center;
+            padding: 45px 20px;
+            margin-top: 50px;
+        }
+
+        #main-footer p {
+            margin-bottom: 12px;
+            font-size: 0.92rem;
+            line-height: 1.65;
+        }
+        #main-footer .footer-logo-container {
+            margin-bottom: 18px;
+            opacity: 0.8;
+        }
+        #main-footer .footer-logo-container img {
+            height: 38px;
+            margin: 0 4px;
+            border-radius: 0; /* Logo biasanya tidak perlu radius */
+        }
+
+        .social-links-footer a {
+            color: #b0bec5;
+            margin: 0 10px;
+            font-size: 1.5rem;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .social-links-footer a:hover {
+            color: var(--secondary-color);
+            transform: translateY(-4px) scale(1.05);
+        }
+        #main-footer .copyright-text {
+            margin-top: 18px;
+            font-size: 0.82rem;
+            color: #78909c; /* Warna copyright lebih lembut lagi */
+        }
+        #main-footer .copyright-text i.fa-heart {
+            color: var(--secondary-color);
+            transition: transform 0.3s ease, color 0.3s ease;
+            animation: pulseHeart 1.5s infinite ease-in-out;
+        }
+         #main-footer .copyright-text i.fa-heart:hover {
+            transform: scale(1.25);
+            color: #ff8a65; /* Warna hati berubah saat hover */
+            animation-play-state: paused; /* Hentikan animasi pulse saat hover */
+        }
+        @keyframes pulseHeart {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+
+        /* --- Animasi Scroll yang Ditingkatkan --- */
+        /* Default state untuk semua elemen animasi */
+        .animate-on-scroll {
+            opacity: 0;
+            transition-property: opacity, transform;
+            transition-duration: 0.7s; /* Durasi standar */
+            transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Default easeOutBack */
+        }
+
+        .animate-on-scroll.is-visible {
+            opacity: 1;
+            transform: none !important; /* Paksa transform kembali ke state normal */
+        }
+
+        /* Variasi arah dan jenis animasi */
+        .scroll-animate-from-bottom { transform: translateY(70px); }
+        .scroll-animate-from-left { transform: translateX(-70px); }
+        .scroll-animate-from-right { transform: translateX(70px); }
+        .scroll-animate-zoom-in { transform: scale(0.85); }
+        .scroll-animate-fade-in { transition-timing-function: ease-in; /* Hanya fade, tanpa transform */ }
+        
+        /* Durasi animasi yang berbeda */
+        .scroll-duration-fast { transition-duration: 0.5s; }
+        .scroll-duration-slow { transition-duration: 1s; }
+
+        /* Timing function yang berbeda */
+        .scroll-ease-out-quad { transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .scroll-ease-in-out-sine { transition-timing-function: cubic-bezier(0.445, 0.05, 0.55, 0.95); }
+
+        /* Delay untuk animasi berurutan */
+        .scroll-delay-100 { transition-delay: 0.1s; }
+        .scroll-delay-200 { transition-delay: 0.2s; }
+        .scroll-delay-300 { transition-delay: 0.3s; }
+        .scroll-delay-400 { transition-delay: 0.4s; }
+        .scroll-delay-500 { transition-delay: 0.5s; }
+
+
+        /* --- Media Queries untuk Responsiveness --- */
+        @media (max-width: 1024px) { /* Tablet landscape dan di bawahnya */
+            html { font-size: 15px; } /* Sedikit kecilkan base font */
+            section h2.section-title { font-size: 2.4rem; }
+            .hero-content h1 { font-size: 2.7rem; }
+            .hero-content .arabic-text { font-size: 2.3rem; }
+            .hero-content p { font-size: 1.1rem; }
+        }
+
+        @media (max-width: 768px) { /* Tablet portrait dan mobile besar */
+            html { font-size: 14.5px; }
+            :root {
+                 --navbar-height: 65px;
+            }
+
+            #hamburger-btn {
+                display: flex; /* Menggunakan flex untuk align ikon */
+                align-items: center;
+                justify-content: center;
+                font-size: 1.7rem; /* Ukuran ikon hamburger */
+            }
+
+            #desktop-menu {
+                display: none;
+            }
+
+            .hero-content h1 { font-size: 2rem; }
+            .hero-content .arabic-text { font-size: 1.8rem; }
+            .hero-content p { font-size: 1rem; }
+            .hero-nav-arrow {
+                font-size: 1.8rem;
+                padding: 10px;
+                width: 42px;
+                height: 42px;
+            }
+            .hero-nav-left { left: 15px; }
+            .hero-nav-right { right: 15px; }
+            .hero-slide-indicators { bottom: 20px; gap: 10px; }
+            .hero-slide-indicator { width: 8px; height: 8px; }
+            .hero-slide-indicator.active { width: 16px; }
+
+
+            section { padding: 60px 0; }
+            section h2.section-title {
+                font-size: 2rem;
+                margin-bottom: 35px;
+            }
+
+            #sambutan .sambutan-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            #sambutan .sambutan-img-container {
+                margin-bottom: 30px;
+                max-width: 280px;
+                align-self: center;
+            }
+             #sambutan .sambutan-img { max-width: 250px; }
+             #sambutan .sambutan-text p { text-align: left; font-size: 0.95rem; }
+
+
+            .kontak-container { flex-direction: column; }
+            .kontak-map { height: 320px; }
+            .social-links-kontak { text-align: center; }
+
+            .jadwal-grid, .galeri-grid, .artikel-grid {
+                 grid-template-columns: 1fr;
+                 gap: 25px;
+            }
+            .jadwal-item, .artikel-item { padding: 22px; }
+            .jadwal-item h3 { font-size: 1.3rem; }
+            .artikel-content h3 { font-size: 1.15rem; }
+
+            .footer-logo-container img { height: 35px; }
+            #main-footer p { font-size: 0.9rem; }
+            .social-links-footer a { font-size: 1.4rem; }
+        }
+
+        @media (max-width: 480px) { /* Mobile kecil */
+            html { font-size: 14px; }
+             .hero-content { padding: 20px; }
+             .hero-content h1 { font-size: 1.7rem; }
+             .hero-content .arabic-text { font-size: 1.5rem; }
+             .hero-content p { font-size: 0.9rem; margin-bottom: 20px; }
+             .hero-content .btn { padding: 10px 20px; font-size: 0.85rem; }
+
+             #mobile-menu { width: 85%; }
+             section { padding: 50px 0; }
+             section h2.section-title { font-size: 1.7rem; margin-bottom: 30px; }
+             #sambutan .sambutan-img { max-width: 200px; }
+             .jadwal-item h3 { font-size: 1.2rem; }
+             .jadwal-item .deskripsi-kajian, .artikel-excerpt { font-size: 0.88rem; }
+             .artikel-content h3 { font-size: 1.1rem; }
+             .kontak-info ul li { font-size: 0.9rem; }
+             .kontak-info ul li i { font-size: 1.2rem; margin-right: 12px; }
+             .btn { padding: 10px 22px; font-size: 0.9rem; }
+             .btn-small { padding: 7px 15px; font-size: 0.78rem; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="loading-screen">
+        <div class="loading-logo-container">
+            <img src="images/majelistalimsaungngopi.png" alt="Logo Majelis" class="loading-logo">
+            <img src="images/SAUNGNGOPI.png" alt="Saung Ngopi Teks" class="loading-text-logo">
+        </div>
+        <div class="progress-bar-container">
+            <div class="progress-bar"></div>
+        </div>
+        <p class="loading-message">Tunggu sebentar sedang memuat...</p>
+    </div>
+
+    <div id="main-content">
+
+        <header id="main-header">
+            <div class="navbar-container">
+                <a href="#hero" class="logo-container">
+                    <img src="images/SAUNGNGOPI.png" alt="Tulisan Saung Ngopi" class="logo-text-img">
+                </a>
+
+                <nav id="desktop-menu">
+                    <ul>
+                        <li><a href="#hero" class="active-link">Beranda</a></li>
+                        <li><a href="#sambutan">Sambutan</a></li>
+                        <li><a href="#jadwal">Jadwal Kajian</a></li>
+                        <li><a href="#galeri">Galeri</a></li>
+                        <li><a href="#artikel">Artikel</a></li>
+                        <li><a href="#kontak">Kontak</a></li>
+                    </ul>
+                </nav>
+
+                <button id="hamburger-btn" aria-label="Toggle Menu" aria-expanded="false">
+                    <i class="fas fa-bars hamburger-icon"></i>
+                </button>
+            </div>
+        </header>
+
+
+        <div id="mobile-menu">
+             <button id="close-menu-btn" aria-label="Close Menu"><i class="fas fa-times"></i></button>
+            <ul>
+                <li><a href="#hero">Beranda</a></li>
+                <li><a href="#sambutan">Sambutan</a></li>
+                <li><a href="#jadwal">Jadwal Kajian</a></li>
+                <li><a href="#galeri">Galeri</a></li>
+                 <li><a href="#artikel">Artikel</a></li>
+                <li><a href="#kontak">Kontak</a></li>
+            </ul>
+        </div>
+         <div id="menu-overlay"></div>
+
+
+        <section id="hero">
+            <div class="hero-slider" id="heroSlider">
+                <div class="hero-slide active-slide" style="background-image: url('images/');">
+                     <div class="hero-content-container">
+                        <div class="hero-content">
+                            <div class="arabic-text">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم</div>
+                            <h1>Selamat Datang di Majelis Ta'lim Saung Ngopi</h1>
+                            <p>Tempat kita bersama menimba ilmu, mempererat ukhuwah, dan mendekatkan diri kepada Allah SWT.</p>
+                            <a href="#jadwal" class="btn">Lihat Jadwal Kajian</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-slide" style="background-image: url('images/');"> <div class="hero-content-container">
+                        <div class="hero-content">
+                            <div class="arabic-text">نُورٌ عَلَى نُورٍ</div>
+                            <h1>Ilmu Adalah Cahaya</h1>
+                            <p>Mari bersama terangi hati dan pikiran dengan kajian ilmu agama yang bermanfaat.</p>
+                            <a href="#artikel" class="btn btn-secondary">Baca Artikel Islami</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-slide" style="background-image: url('images/');"> <div class="hero-content-container">
+                        <div class="hero-content">
+                           <div class="arabic-text">وَاعْتَصِمُوا بِحَبْلِ اللَّهِ جَمِيعًا</div>
+                            <h1>Ukhuwah Islamiyah</h1>
+                            <p>Jalin silaturahmi dan perkuat persaudaraan dalam naungan iman dan takwa.</p>
+                            <a href="#kontak" class="btn">Hubungi Kami</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-nav-arrow hero-nav-left" id="heroPrevBtn">❮</div>
+            <div class="hero-nav-arrow hero-nav-right" id="heroNextBtn">❯</div>
+            <div class="hero-slide-indicators" id="heroIndicatorsContainer">
+                </div>
+        </section>
+
+<section id="sambutan" class="container">
+    <h2 class="section-title scroll-animate-from-bottom animate-on-scroll">Sambutan Pimpinan</h2>
+    <div class="sambutan-content">
+        <div class="sambutan-img-container animate-on-scroll scroll-animate-from-left scroll-delay-200">
+            <img src="images/Guruu.jpg" alt="Foto Pimpinan Majelis" class="sambutan-img">
+        </div>
+        <div class="sambutan-text animate-on-scroll scroll-animate-from-right scroll-delay-400">
+            <h3 style="text-align: center;">Assalamu'alaikum Warahmatullahi Wabarakatuh</h3>
+            <p class="jabatan" style="text-align: center;">Pimpinan Majelis Ta'lim Saung Ngopi</p>
+            <p style="text-align: justify;">Segala puji bagi Allah SWT, Tuhan semesta alam. Shalawat serta salam semoga senantiasa tercurah kepada junjungan kita Nabi Muhammad SAW, beserta keluarga, sahabat, dan para pengikutnya hingga akhir zaman.</p>
+            <p style="text-align: justify;">Dengan penuh rasa syukur, kami menyambut Anda di website resmi Majelis Ta'lim Saung Ngopi. Website ini kami hadirkan sebagai sarana informasi, komunikasi, dan silaturahmi antara pengurus, jamaah, dan masyarakat luas.</p>
+            <p style="text-align: justify;">Majelis Ta'lim Saung Ngopi berkomitmen untuk menjadi wadah pembelajaran Islam yang ramah, terbuka, dan relevan dengan tantangan zaman, sambil tetap berpegang teguh pada Al-Qur'an dan As-Sunnah. Kami berharap kehadiran majelis ini dapat memberikan kontribusi positif bagi pencerahan umat.</p>
+            <p style="text-align: justify;">Silakan jelajahi berbagai informasi yang kami sediakan. Semoga bermanfaat dan membawa keberkahan bagi kita semua. Jazakumullah khairan katsiran.</p>
+            <p style="text-align: justify;"><strong>Wassalamu'alaikum Warahmatullahi Wabarakatuh.</strong></p>
+            <p style="margin-top: 20px; font-weight: bold; text-align: center;">[Ust. M. Aziz Jaelani]</p>
+        </div>
+    </div>
+</section>
+
+
+        <section id="jadwal">
+            <div class="container">
+                <h2 class="section-title animate-on-scroll scroll-animate-from-bottom">Jadwal Kajian Rutin</h2>
+                <div class="jadwal-grid">
+                    <div class="jadwal-item animate-on-scroll scroll-animate-from-bottom scroll-delay-100">
+                        <div class="jadwal-header">
+                            <i class="fas fa-child jadwal-icon"></i>
+                            <h3>Kajian Santri</h3>
+                        </div>
+                        <p class="waktu"><i class="far fa-clock"></i> Setiap Hari, Ba'da Maghrib - Isya</p>
+                        <p class="pemateri"><i class="fas fa-user-graduate"></i> Para Asatidz Internal</p>
+                        <p class="deskripsi-kajian">Pembelajaran dasar-dasar agama, Al-Qur'an, Hadits, dan akhlak untuk para santri.</p>
+                    </div>
+                    <div class="jadwal-item animate-on-scroll scroll-animate-from-bottom scroll-delay-200">
+                        <div class="jadwal-header">
+                             <i class="fas fa-male jadwal-icon"></i>
+                            <h3>Pengajian Bapak-bapak</h3>
+                        </div>
+                        <p class="waktu"><i class="far fa-clock"></i> Setiap Malam Rabu, Ba'da Isya - Selesai</p>
+                        <p class="pemateri"><i class="fas fa-user-tie"></i> Ustadz Pembimbing</p>
+                        <p class="deskripsi-kajian">Kajian kitab kuning, fiqih, dan pendalaman materi keislaman untuk bapak-bapak.</p>
+                    </div>
+                    <div class="jadwal-item animate-on-scroll scroll-animate-from-bottom scroll-delay-300">
+                        <div class="jadwal-header">
+                            <i class="fas fa-female jadwal-icon"></i>
+                            <h3>Pengajian Ibu-ibu</h3>
+                        </div>
+                        <p class="waktu"><i class="far fa-clock"></i> Setiap Hari Jum'at, Ba'da Sholat Jum'at - Selesai</p>
+                        <p class="pemateri"><i class="fas fa-praying-hands"></i> Ustadzah Pembimbing</p>
+                        <p class="deskripsi-kajian">Pembahasan fiqih wanita, keluarga sakinah, dan tazkiyatun nafs untuk ibu-ibu.</p>
+                    </div>
+                     <div class="jadwal-item animate-on-scroll scroll-animate-from-bottom scroll-delay-400">
+                         <div class="jadwal-header">
+                            <i class="fas fa-users jadwal-icon"></i>
+                            <h3>Manaqib & Rotib Bersama</h3>
+                        </div>
+                        <p class="waktu"><i class="far fa-calendar-alt"></i> Setiap Kamis Malam Jum'at, Ba'da Maghrib - Selesai</p>
+                        <p class="pemateri"><i class="fas fa-mosque"></i> Dipimpin oleh Pimpinan Majelis</p>
+                        <p class="deskripsi-kajian">Pembacaan manaqib Syaikh Abdul Qadir Al-Jailani dan Rotibul Haddad bersama seluruh jamaah (Santri, Bapak-bapak, Ibu-ibu) di Masjid.</p>
+                    </div>
+                </div>
+                 <p class="jadwal-catatan animate-on-scroll scroll-animate-fade-in scroll-duration-slow"><em>Jadwal dapat berubah sewaktu-waktu. Informasi terbaru akan diumumkan melalui media sosial kami atau papan pengumuman majelis.</em></p>
+            </div>
+        </section>
+                <section id="galeri" class="container">
+            <h2 class="section-title animate-on-scroll scroll-animate-from-bottom">Galeri Kegiatan & Fasilitas</h2>
+            <div class="galeri-grid">
+                <div class="galeri-item animate-on-scroll scroll-animate-zoom-in scroll-delay-100" data-src="images/Saung.jpg" data-title="Saung Utama Majelis" data-description="Saung utama menjadi pusat kegiatan belajar mengajar harian, tempat diskusi santai, dan mempererat keakraban antar santri dan pengajar. Desainnya yang terbuka menciptakan suasana belajar yang nyaman dan menyatu dengan alam.">
+                    <img src="images/Saung.jpg" alt="Saung Tempat Ngaji">
+                    <div class="overlay">
+                        <h4 class="overlay-title">Saung Utama</h4>
+                        <span class="view-description-btn">Lihat Detail</span>
+                    </div>
+                </div>
+                <div class="galeri-item animate-on-scroll scroll-animate-zoom-in scroll-delay-200" data-src="images/Madrasah.jpg" data-title="Gedung Madrasah" data-description="Gedung madrasah ini difungsikan untuk kelas-kelas kajian yang lebih formal dan terstruktur, seperti pendalaman kitab kuning dan bahasa Arab. Dilengkapi fasilitas memadai untuk mendukung proses pembelajaran.">
+                    <img src="images/Madrasah.jpg" alt="Madrasah Majelis">
+                    <div class="overlay">
+                        <h4 class="overlay-title">Madrasah</h4>
+                         <span class="view-description-btn">Lihat Detail</span>
+                    </div>
+                </div>
+                <div class="galeri-item animate-on-scroll scroll-animate-zoom-in scroll-delay-300" data-src="images/Masjid.jpg" data-title="Masjid Lingkungan Majelis" data-description="Masjid Al-Barokah, terletak di lingkungan majelis, menjadi tempat utama untuk sholat berjamaah, pelaksanaan kajian akbar, serta kegiatan rutin seperti Manaqib dan pembacaan Rotib setiap malam Jum'at.">
+                    <img src="images/Masjid.jpg" alt="Masjid Lingkungan Majelis">
+                    <div class="overlay">
+                        <h4 class="overlay-title">Masjid Al-Barokah</h4>
+                         <span class="view-description-btn">Lihat Detail</span>
+                    </div>
+                </div>
+
+                <div class="galeri-item animate-on-scroll scroll-animate-zoom-in scroll-delay-100" data-src="images/Foto bersama santri dengan murobbi.jpg" data-title="Kebersamaan Santri & Murobbi" data-description="Momen penuh kehangatan dan keakraban antara para santri dengan murobbi (pembimbing) mereka. Foto ini diambil setelah sesi kajian sore, mencerminkan kedekatan dalam proses menuntut ilmu.">
+                    <img src="images/Foto bersama santri dengan murobbi.jpg" alt="Santri dan Murobbi">
+                    <div class="overlay">
+                        <h4 class="overlay-title">Santri & Murobbi</h4>
+                        <span class="view-description-btn">Lihat Detail</span>
+                    </div>
+                </div>
+                <div class="galeri-item animate-on-scroll scroll-animate-zoom-in scroll-delay-200" data-src="images/Foto bersama santri.jpg" data-title="Keluarga Besar Santri Saung Ngopi" data-description="Foto bersama seluruh santri Majelis Ta'lim Saung Ngopi. Semangat mereka dalam menuntut ilmu menjadi denyut nadi kehidupan di majelis ini. Semoga kelak menjadi generasi penerus yang sholeh dan sholehah.">
+                    <img src="images/Foto bersama santri.jpg" alt="Foto Bersama Santri">
+                    <div class="overlay">
+                        <h4 class="overlay-title">Keluarga Besar Santri</h4>
+                        <span class="view-description-btn">Lihat Detail</span>
+                    </div>
+                </div>
+
+                <div class="galeri-item animate-on-scroll scroll-animate-zoom-in scroll-delay-300" data-src="images/Ngobrol 1.jpg" data-title="Diskusi Ilmu di Saung" data-description="Suasana 'ngobrol pintar' di saung, di mana para santri dan asatidz berdiskusi santai namun mendalam mengenai berbagai topik keislaman. Tradisi 'ngopi' sambil berdiskusi menjadi ciri khas majelis kami.">
+                    <img src="images/Ngobrol 1.jpg" alt="Ngobrol Santai 1">
+                    <div class="overlay">
+                        <h4 class="overlay-title">Diskusi Ilmu</h4>
+                         <span class="view-description-btn">Lihat Detail</span>
+                    </div>
+                </div>
+                <div class="galeri-item animate-on-scroll scroll-animate-zoom-in scroll-delay-100" data-src="images/Ngobrol 2.jpg" data-title="Interaksi Belajar Mengajar" data-description="Momen interaksi yang hidup antara ustadz dan santri selama proses belajar mengajar. Pertanyaan, jawaban, dan diskusi menjadi bagian tak terpisahkan dalam menggali ilmu agama.">
+                    <img src="images/Ngobrol 2.jpg" alt="Ngobrol Santai 2">
+                    <div class="overlay">
+                        <h4 class="overlay-title">Belajar Bersama</h4>
+                        <span class="view-description-btn">Lihat Detail</span>
+                    </div>
+                </div>
+                 <div class="galeri-item animate-on-scroll scroll-animate-zoom-in scroll-delay-200" data-src="images/Ngobrol 3.jpg" data-title="Ngopi Penuh Makna dan Inspirasi" data-description="Lebih dari sekadar minum kopi, sesi 'ngopi' di Saung Ngopi adalah momen untuk berbagi inspirasi, memperkuat motivasi, dan merenungkan berbagai hikmah kehidupan dalam suasana kekeluargaan.">
+                    <img src="images/Ngobrol 3.jpg" alt="Ngobrol Santai 3">
+                    <div class="overlay">
+                        <h4 class="overlay-title">Ngopi Penuh Makna</h4>
+                        <span class="view-description-btn">Lihat Detail</span>
+                    </div>
+                </div>
+                <div class="galeri-item animate-on-scroll scroll-animate-zoom-in scroll-delay-300" data-src="images/Silaturahmi.jpg" data-title="Silaturahmi Mempererat Ukhuwah" data-description="Kegiatan silaturahmi antar jamaah, pengurus, dan masyarakat sekitar. Momen seperti ini sangat penting untuk mempererat tali ukhuwah Islamiyah dan membangun kebersamaan yang solid.">
+                    <img src="images/Silaturahmi.jpg" alt="Silaturahmi Jamaah">
+                    <div class="overlay">
+                        <h4 class="overlay-title">Ukhuwah Jamaah</h4>
+                        <span class="view-description-btn">Lihat Detail</span>
+                    </div>
+                </div>
+
+                <div class="galeri-item animate-on-scroll scroll-animate-zoom-in scroll-delay-100" data-src="images/Santri 1.jpg" data-title="Santri Ahmad Fauzi" data-description="Ahmad Fauzi, salah satu santri yang dikenal tekun dalam belajar Fiqih dan aktif dalam diskusi keagamaan di majelis. Ia bercita-cita menjadi pendakwah yang rendah hati.">
+                    <img src="images/Santri 1.jpg" alt="Santri 1">
+                    <div class="overlay">
+                        <h4 class="overlay-title">Santri Ahmad Fauzi</h4>
+                        <span class="view-description-btn">Lihat Detail</span>
+                    </div>
+                </div>
+                <div class="galeri-item animate-on-scroll scroll-animate-zoom-in scroll-delay-200" data-src="images/Santri 2.jpg" data-title="Santriwati Fatimah Az-Zahra" data-description="Fatimah Az-Zahra, santriwati yang memiliki semangat tinggi dalam menghafal Al-Qur'an dan mempelajari Tafsir. Ia juga aktif dalam kegiatan sosial majelis.">
+                    <img src="images/Santri 2.jpg" alt="Santri 2">
+                    <div class="overlay">
+                        <h4 class="overlay-title">Santriwati Fatimah</h4>
+                        <span class="view-description-btn">Lihat Detail</span>
+                    </div>
+                </div>
+                 <div class="galeri-item animate-on-scroll scroll-animate-zoom-in scroll-delay-300" data-src="images/Santri 3.jpg" data-title="Santri Umar Abdullah" data-description="Umar Abdullah, dikenal karena kecintaannya pada Siroh Nabawiyah dan sejarah Islam. Ia sering berbagi kisah-kisah inspiratif dari para sahabat Nabi.">
+                    <img src="images/Santri 3.jpg" alt="Santri 3">
+                    <div class="overlay">
+                        <h4 class="overlay-title">Santri Umar Abdullah</h4>
+                        <span class="view-description-btn">Lihat Detail</span>
+                    </div>
+                </div>
+                <div class="galeri-item animate-on-scroll scroll-animate-zoom-in scroll-delay-100" data-src="images/Santri 4.jpg" data-title="Santriwati Aisyah Humaira" data-description="Aisyah Humaira, santriwati yang memiliki bakat dalam kaligrafi Arab dan seni Islam. Ia juga aktif membantu dalam kegiatan administrasi majelis.">
+                    <img src="images/Santri 4.jpg" alt="Santri 4">
+                    <div class="overlay">
+                        <h4 class="overlay-title">Santriwati Aisyah</h4>
+                        <span class="view-description-btn">Lihat Detail</span>
+                    </div>
+                </div>
+                <div class="galeri-item animate-on-scroll scroll-animate-zoom-in scroll-delay-200" data-src="images/Santri 5.jpg" data-title="Santri Ali Zainal Abidin" data-description="Ali Zainal Abidin, santri yang gemar mempelajari ilmu Nahwu dan Shorof. Ia memiliki pemahaman yang baik tentang tata bahasa Arab dan sering membantu teman-temannya.">
+                    <img src="images/Santri 5.jpg" alt="Santri 5">
+                    <div class="overlay">
+                        <h4 class="overlay-title">Santri Ali Zainal</h4>
+                        <span class="view-description-btn">Lihat Detail</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div id="galeriModal" class="galeri-modal">
+            <div class="galeri-modal-content">
+                <span class="close-modal-btn" id="closeGaleriModalBtn" title="Tutup">×</span>
+                <img id="modalImage" src="" alt="Gambar Kegiatan Detail">
+                <h3 id="modalTitle"></h3>
+                <p id="modalDescription"></p>
+            </div>
+        </div>
+
+
+         <section id="artikel">
+             <div class="container">
+                 <h2 class="section-title animate-on-scroll scroll-animate-from-bottom">Artikel & Berita Terbaru</h2>
+                 <div class="artikel-grid">
+                     <div class="artikel-item animate-on-scroll scroll-animate-from-bottom scroll-delay-100">
+                         <a href="#" class="artikel-img-link"><img src="https://via.placeholder.com/400x250/006400/FFFFFF?text=Artikel+Menuntut+Ilmu" alt="Keutamaan Menuntut Ilmu"></a>
+                         <div class="artikel-content">
+                              <p class="artikel-meta">
+                                <span><i class="far fa-calendar-alt"></i> 20 Mei 2025</span>
+                                <span><i class="fas fa-user"></i> Admin</span>
+                                <span><i class="fas fa-tag"></i> Ilmu</span>
+                              </p>
+                             <h3><a href="#">Keutamaan Menuntut Ilmu di Jalan Allah</a></h3>
+                             <p class="artikel-excerpt">Menuntut ilmu adalah kewajiban bagi setiap muslim. Artikel ini membahas berbagai keutamaan dan pahala bagi para pencari ilmu dalam perspektif Al-Qur'an dan Hadits...</p>
+                             <a href="#" class="btn btn-small">Baca Selengkapnya <i class="fas fa-arrow-right" style="font-size: 0.7em; margin-left: 5px;"></i></a>
+                         </div>
+                     </div>
+                     <div class="artikel-item animate-on-scroll scroll-animate-from-bottom scroll-delay-200">
+                         <a href="#" class="artikel-img-link"><img src="https://via.placeholder.com/400x250/f4a460/333333?text=Artikel+Istiqomah" alt="Tips Istiqomah"></a>
+                         <div class="artikel-content">
+                              <p class="artikel-meta">
+                                <span><i class="far fa-calendar-alt"></i> 18 Mei 2025</span>
+                                <span><i class="fas fa-user"></i> Redaksi</span>
+                                <span><i class="fas fa-tag"></i> Ibadah</span>
+                              </p>
+                             <h3><a href="#">Tips Menjaga Keistiqomahan dalam Beribadah</a></h3>
+                             <p class="artikel-excerpt">Istiqomah adalah kunci keberhasilan dalam beramal. Bagaimana cara agar kita tetap konsisten dalam menjalankan ibadah sehari-hari? Simak tips praktis berikut...</p>
+                              <a href="#" class="btn btn-small">Baca Selengkapnya <i class="fas fa-arrow-right" style="font-size: 0.7em; margin-left: 5px;"></i></a>
+                         </div>
+                     </div>
+                      <div class="artikel-item animate-on-scroll scroll-animate-from-bottom scroll-delay-300">
+                          <a href="#" class="artikel-img-link"><img src="https://via.placeholder.com/400x250/8FBC8F/FFFFFF?text=Berita+Santunan" alt="Laporan Santunan"></a>
+                          <div class="artikel-content">
+                              <p class="artikel-meta">
+                                <span><i class="far fa-calendar-alt"></i> 15 Mei 2025</span>
+                                <span><i class="fas fa-bullhorn"></i> Pengurus</span>
+                                <span><i class="fas fa-tag"></i> Kegiatan</span>
+                              </p>
+                             <h3><a href="#">Laporan Kegiatan Santunan Anak Yatim Ramadhan 1447 H</a></h3>
+                             <p class="artikel-excerpt">Alhamdulillah, kegiatan santunan anak yatim dan dhuafa pada bulan Ramadhan lalu berjalan lancar. Berikut laporan singkat kegiatan dan penyaluran donasi...</p>
+                             <a href="#" class="btn btn-small">Baca Selengkapnya <i class="fas fa-arrow-right" style="font-size: 0.7em; margin-left: 5px;"></i></a>
+                         </div>
+                     </div>
+                 </div>
+                  <div class="all-articles-btn-container animate-on-scroll scroll-animate-fade-in scroll-duration-slow scroll-delay-400">
+                     <a href="#" class="btn btn-secondary">Lihat Semua Artikel & Berita</a>
+                 </div>
+             </div>
+        </section>
+
+        <section id="kontak" class="container">
+            <h2 class="section-title animate-on-scroll scroll-animate-from-bottom">Hubungi Kami & Lokasi</h2>
+            <div class="kontak-container">
+                <div class="kontak-info animate-on-scroll scroll-animate-from-left scroll-delay-200">
+                    <h3>Informasi Kontak</h3>
+                    <ul>
+                        <li>
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>
+                                <strong>Alamat Majelis:</strong>
+                                Kp. Haur Buyut Tengah RT 02/RW 13, Desa. Bojong Emas, Kec. Solokan Jeruk, Kab. Bandung, Jawa Barat 40376.
+                                <br><a href="https://maps.app.goo.gl/Q3Rj7stt52bWHdsk9" target="_blank" title="Lihat di Google Maps">Lihat Peta Google Maps</a>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="fab fa-whatsapp"></i>
+                            <div>
+    <strong>Telepon (WhatsApp):</strong><br>
+    <a href="https://wa.me/6283195915250" target="_blank">+62 831-9591-5250</a> (Ust. Aziz Jaelani)<br>
+    <a href="https://wa.me/6283142694674" target="_blank">+62 831-4269-4674</a> (Ust. Fauzi)
+</div>
+
+                        </li>
+                        <li>
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <strong>Email:</strong>
+                                <a href="mailto:info@majelissaungngopi.org">info@majelissaungngopi.org</a>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="fas fa-globe"></i>
+                            <div>
+                                <strong>Website Pengelola:</strong>
+                                <a href="https://wildanhidayat07.github.io/" target="_blank">wildanhidayat07.github.io</a>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="fas fa-clock"></i>
+                            <div>
+                                <strong>Jam Operasional Sekretariat:</strong>
+                                Senin - Jumat, Pukul 09:00 - 16:00 WIB
+                            </div>
+                        </li>
+                    </ul>
+                     <div class="social-links-kontak">
+                         <a href="https://www.facebook.com/profile.php?id=100094144964099&mibextid=rS40aB7S9Ucbxw6v" target="_blank" title="Facebook Saung Ngopi"><i class="fab fa-facebook-f"></i></a>
+                         <a href="https://www.instagram.com/saungngopi2023?igsh=dWhqMzNrdnBjenZ1" target="_blank" title="Instagram Saung Ngopi"><i class="fab fa-instagram"></i></a>
+                         <a href="https://www.youtube.com/@SaungNgopi_alhidayah" target="_blank" title="YouTube Channel Saung Ngopi"><i class="fab fa-youtube"></i></a>
+                     </div>
+                </div>
+                <div class="kontak-map animate-on-scroll scroll-animate-from-right scroll-delay-400">
+                     <iframe
+                         src="https://maps.app.goo.gl/Q3Rj7stt52bWHdsk9" /* GANTI DENGAN URL EMBED GOOGLE MAPS YANG VALID */
+                         width="100%"
+                         height="100%"
+                         style="border:0;"
+                         allowfullscreen=""
+                         loading="lazy"
+                         referrerpolicy="no-referrer-when-downgrade"
+                         title="Lokasi Majelis Ta'lim Saung Ngopi">
+                     </iframe>
+                </div>
+            </div>
+        </section>
+
+        <footer id="main-footer">
+             <div class="container">
+                <div class="footer-logo-container animate-on-scroll scroll-animate-zoom-in scroll-delay-100">
+                	<center>
+                    <img src="images/SAUNGNGOPI.png" alt="Teks Saung Ngopi Mini">
+                    </center>
+                </div>
+                 <div class="social-links-footer animate-on-scroll scroll-animate-fade-in scroll-delay-200" style="margin-bottom: 25px;">
+                     <a href="https://www.facebook.com/profile.php?id=100094144964099&mibextid=rS40aB7S9Ucbxw6v" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                     <a href="https://www.instagram.com/saungngopi2023?igsh=dWhqMzNrdnBjenZ1" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+                     <a href="https://www.youtube.com/@SaungNgopi_alhidayah" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
+                     <a href="https://wa.me/6283195915250" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                 </div>
+                 <p class="animate-on-scroll scroll-animate-fade-in scroll-delay-300">© <span id="current-year">2024</span> Majelis Ta'lim Saung Ngopi. Hak Cipta Dilindungi Undang-Undang.</p>
+<p class="copyright-text animate-on-scroll scroll-animate-fade-in scroll-delay-400">Dikembangkan Oleh <a href="https://wildanhidayat07.github.io/" target="_blank" rel="noopener noreferrer">Wildan Hidayat</a>.</p>
+             </div>
+        </footer>
+
+    </div> <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loadingScreen = document.getElementById('loading-screen');
+            const mainContent = document.getElementById('main-content');
+            const progressBar = loadingScreen ? loadingScreen.querySelector('.progress-bar') : null;
+            const LOADING_DURATION = 5000; // 5 detik
+
+            // Fungsi untuk menampilkan konten utama
+            function showMainContent() {
+                if (loadingScreen) {
+                    loadingScreen.classList.add('hidden');
+                }
+                if (mainContent) {
+                    mainContent.style.display = 'block'; // Pastikan display diatur sebelum transisi opacity
+                    setTimeout(() => { // Delay kecil untuk memastikan display:block diterapkan
+                        mainContent.classList.add('visible');
+                        initializePageFunctions(); // Panggil fungsi inisialisasi lainnya
+                    }, 50);
+                } else {
+                    console.error("Elemen #main-content tidak ditemukan.");
+                }
+            }
+            
+            // Pemicu utama untuk menyembunyikan loading screen
+            // Ini akan berjalan setelah LOADING_DURATION, terlepas dari animasi progress bar.
+            const loadingTimeout = setTimeout(showMainContent, LOADING_DURATION);
+
+            // Jika ada progress bar, kita bisa mencoba menyinkronkan, tapi timeout utama tetap jadi jaminan
+            if (progressBar) {
+                // Kita bisa tambahkan event listener ke progress bar jika diperlukan,
+                // tapi timeout di atas akan jadi fallback yang lebih pasti.
+                // progressBar.addEventListener('animationend', () => {
+                //    clearTimeout(loadingTimeout); // Hapus timeout utama jika animasi selesai lebih dulu (jarang terjadi jika durasi sama)
+                //    showMainContent();
+                // });
+            } else if (loadingScreen) { // Jika tidak ada progress bar, tapi loading screen ada
+                // Timeout utama sudah cukup
+            } else { // Jika tidak ada loading screen sama sekali
+                console.warn("Elemen #loading-screen tidak ditemukan. Langsung tampilkan konten.");
+                clearTimeout(loadingTimeout); // Hapus timeout karena tidak perlu
+                // Langsung tampilkan konten (tanpa animasi loading screen)
+                 if (mainContent) {
+                    mainContent.style.display = 'block';
+                    mainContent.classList.add('visible');
+                    initializePageFunctions();
+                }
+            }
+
+
+            // Fungsi untuk menginisialisasi semua fungsi halaman lainnya
+            function initializePageFunctions() {
+                setupMenu();
+                setupHeaderScroll();
+                initializeScrollAnimations();
+                updateFooterYear();
+                activateMenuOnScroll();
+                setupHeroSlider();
+                setupGalleryModal();
+            }
+
+            // 2. Hamburger Menu Toggle & Sticky Header Logic
+            function setupMenu() {
+                const hamburgerBtn = document.getElementById('hamburger-btn');
+                const mobileMenu = document.getElementById('mobile-menu');
+                const closeMenuBtn = document.getElementById('close-menu-btn');
+                const menuOverlay = document.getElementById('menu-overlay');
+                const mobileMenuLinks = mobileMenu ? mobileMenu.querySelectorAll('a[href^="#"]') : [];
+                const hamburgerIcon = hamburgerBtn ? hamburgerBtn.querySelector('.hamburger-icon') : null;
+
+                if (!hamburgerBtn || !mobileMenu || !closeMenuBtn || !menuOverlay || !hamburgerIcon) {
+                    console.warn("Satu atau lebih elemen menu tidak ditemukan.");
+                    return;
+                }
+
+                function toggleMenu() {
+                    const isExpanded = mobileMenu.classList.toggle('active');
+                    hamburgerBtn.classList.toggle('active');
+                    menuOverlay.classList.toggle('active');
+                    hamburgerBtn.setAttribute('aria-expanded', isExpanded);
+
+                    if (isExpanded) {
+                        hamburgerIcon.classList.remove('fa-bars');
+                        hamburgerIcon.classList.add('fa-times');
+                        document.body.style.overflow = 'hidden';
+                    } else {
+                        hamburgerIcon.classList.remove('fa-times');
+                        hamburgerIcon.classList.add('fa-bars');
+                        document.body.style.overflow = '';
+                    }
+                }
+
+                hamburgerBtn.addEventListener('click', toggleMenu);
+                closeMenuBtn.addEventListener('click', toggleMenu);
+                menuOverlay.addEventListener('click', toggleMenu);
+
+                mobileMenuLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        if (mobileMenu.classList.contains('active')) {
+                            toggleMenu();
+                        }
+                    });
+                });
+            }
+
+            function setupHeaderScroll() {
+                const mainHeader = document.getElementById('main-header');
+                if (!mainHeader) return;
+                let lastScrollTop = 0;
+
+                window.addEventListener('scroll', () => {
+                    let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    if (scrollTop > lastScrollTop && scrollTop > mainHeader.offsetHeight) {
+                        mainHeader.classList.add('header-hidden');
+                    } else {
+                        mainHeader.classList.remove('header-hidden');
+                    }
+                    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+
+                    if (scrollTop > 50) {
+                        mainHeader.classList.add('scrolled');
+                    } else {
+                        mainHeader.classList.remove('scrolled');
+                    }
+                }, false);
+            }
+
+            // 3. Scroll Animations
+            function initializeScrollAnimations() {
+                const animatedElements = document.querySelectorAll('.animate-on-scroll');
+                if (!animatedElements.length) return;
+
+                const observerOptions = {
+                    root: null,
+                    rootMargin: '0px',
+                    threshold: 0.1
+                };
+
+                const observerCallback = (entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                };
+                const observer = new IntersectionObserver(observerCallback, observerOptions);
+                animatedElements.forEach(el => observer.observe(el));
+            }
+
+            // 4. Update Tahun di Footer
+            function updateFooterYear() {
+                const currentYearSpan = document.getElementById('current-year');
+                if (currentYearSpan) {
+                    currentYearSpan.textContent = new Date().getFullYear();
+                }
+            }
+
+            // 5. Active Menu Link Highlighting
+            function activateMenuOnScroll() {
+                const sections = document.querySelectorAll('section[id]');
+                const navLinks = document.querySelectorAll('#desktop-menu ul li a, #mobile-menu ul li a');
+                const mainHeader = document.getElementById('main-header');
+                if (!sections.length || !navLinks.length) return;
+
+                const observerOptions = {
+                    root: null,
+                    rootMargin: `-${mainHeader ? mainHeader.offsetHeight + 10 : 80}px 0px -55% 0px`,
+                    threshold: 0
+                };
+
+                const sectionObserver = new IntersectionObserver(entries => {
+                    let currentActiveFound = false;
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting && !currentActiveFound) {
+                            const id = entry.target.getAttribute('id');
+                            navLinks.forEach(link => {
+                                link.classList.remove('active-link');
+                                if (link.getAttribute('href') === `#${id}`) {
+                                    link.classList.add('active-link');
+                                    currentActiveFound = true; // Tandai bahwa link aktif saat ini sudah ditemukan
+                                }
+                            });
+                        }
+                    });
+                     // Jika tidak ada section yang intersecting (misalnya di paling atas atau bawah halaman di luar section)
+                    // atau jika hero yang aktif, pastikan link Beranda tetap aktif.
+                    if (!currentActiveFound && window.scrollY < sections[0].offsetTop - (mainHeader ? mainHeader.offsetHeight : 70) ) {
+                         navLinks.forEach(link => {
+                            link.classList.remove('active-link');
+                            if (link.getAttribute('href') === '#hero') {
+                                link.classList.add('active-link');
+                            }
+                        });
+                    }
+
+                }, observerOptions);
+                sections.forEach(section => sectionObserver.observe(section));
+            }
+
+            // 6. Hero Slider Logic
+            function setupHeroSlider() {
+                const slider = document.getElementById('heroSlider');
+                const prevBtn = document.getElementById('heroPrevBtn');
+                const nextBtn = document.getElementById('heroNextBtn');
+                const indicatorsContainer = document.getElementById('heroIndicatorsContainer');
+
+                if (!slider || !prevBtn || !nextBtn || !indicatorsContainer) return;
+
+                const slides = Array.from(slider.children).filter(child => child.classList.contains('hero-slide'));
+                if (slides.length === 0) return;
+
+                let currentSlide = 0;
+                const totalSlides = slides.length;
+
+                slider.style.width = `${totalSlides * 100}%`;
+                slides.forEach(slide => slide.style.width = `${100 / totalSlides}%`);
+
+                slides.forEach((_, index) => {
+                    const indicator = document.createElement('div');
+                    indicator.classList.add('hero-slide-indicator');
+                    indicator.addEventListener('click', () => goToSlide(index));
+                    indicatorsContainer.appendChild(indicator);
+                });
+                const indicators = indicatorsContainer.children;
+
+                function updateSlideVisuals() {
+                    slides.forEach((slide, index) => {
+                        slide.classList.toggle('active-slide', index === currentSlide);
+                    });
+                    Array.from(indicators).forEach((ind, idx) => {
+                        ind.classList.toggle('active', idx === currentSlide);
+                    });
+                }
+
+                function goToSlide(slideIndex, fromAutoSlide = false) {
+                    currentSlide = (slideIndex + totalSlides) % totalSlides;
+                    slider.style.transform = `translateX(-${currentSlide * (100 / totalSlides)}%)`;
+                    updateSlideVisuals();
+                    
+                    // Reset interval auto-slide jika navigasi manual
+                    if (!fromAutoSlide) {
+                        clearInterval(autoSlideInterval);
+                        autoSlideInterval = setInterval(() => goToSlide(currentSlide + 1, true), 7000);
+                    }
+                }
+                
+                prevBtn.addEventListener('click', () => goToSlide(currentSlide - 1));
+                nextBtn.addEventListener('click', () => goToSlide(currentSlide + 1));
+
+                let autoSlideInterval = setInterval(() => goToSlide(currentSlide + 1, true), 7000);
+
+                slider.addEventListener('mouseenter', () => clearInterval(autoSlideInterval));
+                slider.addEventListener('mouseleave', () => {
+                     clearInterval(autoSlideInterval);
+                     autoSlideInterval = setInterval(() => goToSlide(currentSlide + 1, true), 7000);
+                });
+                
+                goToSlide(0); // Inisialisasi slide pertama
+            }
+
+            // 7. Galeri Modal Logic
+            function setupGalleryModal() {
+                const galeriItems = document.querySelectorAll('.galeri-item');
+                const modal = document.getElementById('galeriModal');
+                const modalImage = document.getElementById('modalImage');
+                const modalTitle = document.getElementById('modalTitle');
+                const modalDescription = document.getElementById('modalDescription');
+                const closeModalBtn = document.getElementById('closeGaleriModalBtn');
+
+                if (!modal || !modalImage || !modalTitle || !modalDescription || !closeModalBtn) return;
+
+                galeriItems.forEach(item => {
+                    const viewBtn = item.querySelector('.view-description-btn');
+                    const imageSrc = item.dataset.src || item.querySelector('img').src;
+                    const title = item.dataset.title || 'Judul Gambar';
+                    const description = item.dataset.description || 'Deskripsi tidak tersedia.';
+
+                    const openModalFunction = () => {
+                        modalImage.src = imageSrc;
+                        modalTitle.textContent = title;
+                        modalDescription.textContent = description;
+                        modal.style.display = 'flex';
+                        document.body.style.overflow = 'hidden';
+                    };
+
+                    if (viewBtn) {
+                        viewBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            openModalFunction();
+                        });
+                    }
+                     // Fallback: jika tidak ada tombol, atau jika item itu sendiri ingin diklik
+                    item.addEventListener('click', (e) => {
+                        // Hanya buka jika klik langsung pada item, bukan pada tombol di dalamnya (jika ada tombol)
+                        if (!viewBtn || (viewBtn && !viewBtn.contains(e.target))) {
+                            openModalFunction();
+                        }
+                    });
+                });
+
+                const closeModalFunction = () => {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = '';
+                    modalImage.src = ""; // Hentikan pemuatan gambar
+                };
+
+                closeModalBtn.addEventListener('click', closeModalFunction);
+                modal.addEventListener('click', (event) => {
+                    if (event.target === modal) closeModalFunction();
+                });
+                document.addEventListener('keydown', (event) => {
+                    if (event.key === 'Escape' && modal.style.display === 'flex') closeModalFunction();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
